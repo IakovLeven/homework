@@ -1,0 +1,26 @@
+#!/bin/bash
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 [input directory] [output directory]"
+    exit 1
+fi
+
+input=$1
+output=$2
+
+counter=1
+
+mkdir -p "$output"
+
+find "$input" -type f -print0 | while IFS= read -r -d $'\0' file; do
+    base_name=$(basename "$file")
+    output_file="$output/$base_name"
+
+    while [ -f "$output_file" ]; do
+        output_file="${output}/${counter}_${base_name}"
+        ((counter++))
+    done
+
+    cp "$file" "$output_file"
+done
+
+echo "completed"
